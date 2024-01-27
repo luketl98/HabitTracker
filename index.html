@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for character set and viewport settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main header of the web app -->
+    <header>
+        <h1>Habit Tracker</h1>
+    </header>
+    <main>
+        <!-- Form to add a new habit/task -->
+        <form id="addHabitForm">
+            <input type="text" id="newHabit" placeholder="Enter new habit/task">
+            <input type="text" id="habitDescription" placeholder="Enter description">
+            <input type="text" id="habitSubtasks" placeholder="Enter subtasks">
+            
+            <!-- Dropdown for selecting if the task is recurring -->
+            <label for="recurringSelect">Is this a recurring task?</label>
+            <select id="recurringSelect">
+                <!-- Input for recurrence interval and button to submit the task -->
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            
+            <input type="number" id="recurrenceInterval" placeholder="Recurrence interval in days">
+            <button type="submit">Add Habit/Task</button>
+        </form>
+
+        <!-- Section to display recurring tasks -->
+        <section id="recurringTasks">
+            <h2>Recurring Tasks</h2>
+            <!-- Recurring tasks will be listed here -->
+        </section>
+
+        <!-- Section to display all tasks -->
+        <section id="allTasks">
+            <h2>All Tasks</h2>
+            <!-- All tasks will be listed here -->
+        </section>
+    </main>
+
+    <footer>
+        <!-- Footer section of the web app -->
+        <p>© 2024 Habit Tracker App</p>
+    </footer>
+
+    <!-- Linking the JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
+
