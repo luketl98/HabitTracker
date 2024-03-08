@@ -5,7 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Tracker</title>
+    <!-- Link to external CSS file -->
     <link rel="stylesheet" href="style.css">
+<style>
+    /* Basic CSS reset to remove default margin, padding, and box-sizing */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    /* Body styling for font, background, color, and padding */
+    body {
+        font-family: 'Arial', sans-serif; 
+        background-color: #f0f8ff; /* Soft pastel blue background */
+        color: #5f5f5f; /* Soft text color for readability */
+        padding: 20px;
+    }
+    /* Header and h1 styling for alignment and color */
+    header, h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    h1 {
+        color: #8aacc8; /* Pastel blue for headings */
+        font-size: 2em;
+    }
+    /* Form styling for layout and spacing */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    /* Input and button styling for appearance */
+    input[type="text"], input[type="number"], select, button {
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    /* Additional button styling for color and interaction */
+    button {
+        background-color: #8aacc8; /* Pastel blue button */
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #7799bb; /* Slightly darker blue on hover */
+    }
+    /* Styling for task display sections */
+    section, div {
+        margin-top: 20px;
+        background-color: #e6f2ff; /* Very light blue for tasks */
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+    /* Checkbox styling for spacing */
+    input[type="checkbox"] {
+        margin-right: 5px;
+    }
+</style>
 </head>
 <body>
     <!-- Main header of the web app -->
@@ -13,44 +73,124 @@
         <h1>Habit Tracker</h1>
     </header>
     <main>
-        <!-- Form to add a new habit/task -->
-        <form id="addHabitForm">
-            <input type="text" id="newHabit" placeholder="Enter new habit/task">
-            <input type="text" id="habitDescription" placeholder="Enter description">
-            <input type="text" id="habitSubtasks" placeholder="Enter subtasks">
-            
-            <!-- Dropdown for selecting if the task is recurring -->
-            <label for="recurringSelect">Is this a recurring task?</label>
-            <select id="recurringSelect">
-                <!-- Input for recurrence interval and button to submit the task -->
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-            
-            <input type="number" id="recurrenceInterval" placeholder="Recurrence interval in days">
-            <button type="submit">Add Habit/Task</button>
-        </form>
-
-        <!-- Section to display recurring tasks -->
+        <!-- Button to show the form for adding a new habit/task -->
+        <button id="showAddTaskFormButton">Add New Habit/Task</button>
+        <!-- Sections to display recurring and all tasks -->
         <section id="recurringTasks">
             <h2>Recurring Tasks</h2>
             <!-- Recurring tasks will be listed here -->
         </section>
-
-        <!-- Section to display all tasks -->
         <section id="allTasks">
             <h2>All Tasks</h2>
             <!-- All tasks will be listed here -->
         </section>
     </main>
-
     <footer>
-        <!-- Footer section of the web app -->
+        <!-- Footer section with copyright notice -->
         <p>© 2024 Habit Tracker App</p>
     </footer>
-
+    <!-- Modal form for adding or editing a habit/task -->
+    <div id="addTaskModal" style="display: none;">
+        <form id="addHabitForm">
+            <!-- Input fields for task details -->
+            <input type="text" id="newHabit" placeholder="Enter new habit/task">
+            <input type="text" id="habitDescription" placeholder="Enter description">
+            <input type="text" id="habitSubtasks" placeholder="Enter subtasks">
+            <!-- Dropdown to select if the task is recurring -->
+            <label for="recurringSelect">Is this a recurring task?</label>
+            <select id="recurringSelect">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+            <!-- Input for recurrence interval and submit button -->
+            <input type="number" id="recurrenceInterval" placeholder="Recurrence interval in days">
+            <button type="submit">Add Habit/Task</button>
+        </form>
+    </div>
+    
     <!-- Linking the JavaScript file -->
-    <script src="script.js"></script>
+
+<script>
+    
+// Counter to assign unique IDs to tasks
+let taskIdCounter = 1; // Start the counter
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Grabbing elements from the DOM to interact with
+    const addHabitForm = document.getElementById('addHabitForm');
+    const recurringTasksSection = document.getElementById('recurringTasks');
+    const allTasksSection = document.getElementById('allTasks');
+
+    // Event listener for form submission to add a new task
+    addHabitForm.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevents the form from submitting in the traditional way
+        // Retrieving values from the form inputs
+        const habitName = document.getElementById('newHabit').value;
+        const habitDescription = document.getElementById('habitDescription').value;
+        const habitSubtasks = document.getElementById('habitSubtasks').value.split(',');
+        const isRecurring = document.getElementById('recurringSelect').value === 'yes';
+        const recurrenceInterval = document.getElementById('recurrenceInterval').value;
+        // Creating a task object with the form data
+        const task = {
+            id: taskIdCounter++, // Assign an ID and increment the counter
+            name: habitName,
+            description: habitDescription,
+            subtasks: habitSubtasks,
+            recurring: isRecurring,
+            interval: recurrenceInterval
+        };
+        // Function call to display the task on the page
+        displayTask(task);
+        // Hide the modal form after the task is added
+        addTaskModal.style.display = 'none';
+    });
+
+    // Function to display a task in the appropriate section
+    function displayTask(task) {
+        const taskElement = document.createElement('div');
+        let subtasksHTML = '';
+        // Generating HTML for each subtask
+        for (const subtask of task.subtasks) {
+            subtasksHTML += `<div><input type="checkbox" class="subtask-checkbox"> ${subtask.trim()}</div>`;
+        }
+        // Setting the inner HTML of the task element with task details
+        taskElement.innerHTML = `
+            <h3><input type="checkbox" class="task-checkbox"> ${task.name}</h3>
+            <p>Description: ${task.description}</p>
+            <div>Subtasks: ${subtasksHTML}</div>
+            ${task.recurring ? `<p>Recurs every ${task.interval} days</p>` : ''}
+        `;
+        // Appending the task to the correct section based on its recurrence
+        if (task.recurring) {
+            recurringTasksSection.appendChild(taskElement);
+        } else {
+            allTasksSection.appendChild(taskElement);
+        }
+        // Adding an edit button to each task
+        taskElement.innerHTML += `<button class="editTaskBtn" data-taskid="${task.id}">Edit</button>`;
+        // Setup change event listeners for checkboxes to mark tasks/subtasks as done
+        const checkboxes = taskElement.querySelectorAll('.subtask-checkbox, .task-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', handleCheckboxChange);
+        });
+    }
+    
+    // Function to handle checkbox change events
+    function handleCheckboxChange(event) {
+        const checkbox = event.target;
+        // Toggle line-through style based on checkbox state
+        if (checkbox.checked) {
+            checkbox.parentNode.style.textDecoration = 'line-through';
+        } else {
+            checkbox.parentNode.style.textDecoration = 'none';
+        }
+    }
+
+    // Show the add task form when the "Add New Habit/Task" button is clicked
+    document.getElementById('showAddTaskFormButton').addEventListener('click', () => {
+        document.getElementById('addTaskModal').style.display = 'block';
+    });
+});
+</script>
 </body>
 </html>
-
